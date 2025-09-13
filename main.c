@@ -6,7 +6,7 @@
 /*   By: fares-_-q7h <fares-_-q7h@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/10 22:04:02 by fares-_-q7h       #+#    #+#             */
-/*   Updated: 2025/09/13 23:35:19 by fares-_-q7h      ###   ########.fr       */
+/*   Updated: 2025/09/13 23:40:32 by fares-_-q7h      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ int	init_role_and_pipe(int pip[2], int argc)
 	return (is_parent != 0);
 }
 
-int	prepar_fds(int is_parent, int **pip, char **argv)
+int	prepar_fds(int is_parent, int pip[2], char **argv)
 {
 	int	fd;
 
@@ -47,23 +47,23 @@ int	prepar_fds(int is_parent, int **pip, char **argv)
 	{
 		fd = open(argv[4], O_CREAT | O_WRONLY | O_TRUNC, 0644);
 		if (fd < 0)
-			return (close((*pip)[0]), close((*pip)[1]), perror("Error cmd2"),
+			return (close(pip[0]), close(pip[1]), perror("Error cmd2"),
 				-1);
-		close((*pip)[1]);
-		if (dup2((*pip)[0], STDIN_FILENO) == -1 || dup2(fd, STDOUT_FILENO) ==
+		close(pip[1]);
+		if (dup2(pip[0], STDIN_FILENO) == -1 || dup2(fd, STDOUT_FILENO) ==
 			-1)
-			return (close(fd), close((*pip)[0]), perror("Error cmd2"), -1);
+			return (close(fd), close(pip[0]), perror("Error cmd2"), -1);
 	}
 	else
 	{
 		fd = open(argv[1], O_RDONLY);
 		if (fd < 0)
-			return (close((*pip)[0]), close((*pip)[1]), perror("Error cmd1"),
+			return (close(pip[0]), close(pip[1]), perror("Error cmd1"),
 				-1);
-		close((*pip)[0]);
-		if (dup2(fd, STDIN_FILENO) == -1 || dup2((*pip)[1], STDOUT_FILENO) ==
+		close(pip[0]);
+		if (dup2(fd, STDIN_FILENO) == -1 || dup2(pip[1], STDOUT_FILENO) ==
 			-1)
-			return (close(fd), close((*pip)[1]), perror("Error cmd1"), -1);
+			return (close(fd), close(pip[1]), perror("Error cmd1"), -1);
 	}
 	return (close(fd), 0);
 }
@@ -77,7 +77,7 @@ int	main(int argc, char **argv, char **envp)
 	char	**cmd;
 
 	is_parent = init_role_and_pipe(pip, argc);
-	if (is_parent == -1 || prepar_fds(is_parent, &pip, argv) == -1)
+	if (is_parent == -1 || prepar_fds(is_parent, pip, argv) == -1)
 		return (1);
 	exit_id = 0;
 	cmd = ft_split(argv[1 + is_parent], ' ');
