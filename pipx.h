@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipx.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: farmoham <farmoham@student.42.fr>          +#+  +:+       +#+        */
+/*   By: fares-_-q7h <fares-_-q7h@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/10 22:37:20 by fares-_-q7h       #+#    #+#             */
-/*   Updated: 2025/09/12 22:32:25 by farmoham         ###   ########.fr       */
+/*   Updated: 2025/09/13 21:05:58 by fares-_-q7h      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 # include <sys/wait.h>
 # include <unistd.h>
 
-char	*cmnd_path(char **envp, char **cmd, int *exit_id);
+char	*cmnd_path(char **envp, char **cmd, int *exit_id, int is_parent);
 void	free_list(char **list);
 
 #endif

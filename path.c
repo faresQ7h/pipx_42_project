@@ -3,14 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   path.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: farmoham <farmoham@student.42.fr>          +#+  +:+       +#+        */
+/*   By: fares-_-q7h <fares-_-q7h@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/12 18:09:44 by farmoham          #+#    #+#             */
-/*   Updated: 2025/09/12 23:18:14 by farmoham         ###   ########.fr       */
+/*   Updated: 2025/09/13 23:09:27 by fares-_-q7h      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipx.h"
+
+char	*set_return(int *exit_id, int set)
+{
+	*exit_id = set;
+	return (NULL);
+}
 
 void	free_list(char **list)
 {
@@ -25,40 +31,11 @@ void	free_list(char **list)
 	free(list);
 }
 
-char	*search_paths(char **__paths, char **cmd, int *exit_id)
+int	check_access(char *cmd_path, int *exit_id)
 {
-	int		i;
-	char	*path;
-	char	*cmd_nm;
-
-	cmd_nm = ft_strjoin("/", cmd[0]);
-	if (!cmd_nm)
-		return (NULL);
-	i = 0;
-	path = NULL;
-	while (__paths[i])
-	{
-		if (path)
-			free(path);
-		path = ft_strjoin(__paths[i], cmd_nm);
-		if (!path)
-			return (free(cmd_nm), NULL);
-		check_access(&path, cmd_nm, exit_id);
-		i++;
-	}
-	*exit_id = 127;
-	return (free(cmd_nm), free(path), NULL);
-}
-
-int	check_access(char **path, char *cmd, int *exit_id)
-{
-	*path = NULL;
-	if (!access(cmd, F_OK | X_OK))
-	{
-		*path = cmd;
+	if (!access(cmd_path, X_OK))
 		return (0);
-	}
-	else if (!access(cmd[0], F_OK) && access(cmd, X_OK))
+	else if (!access(cmd_path, F_OK))
 	{
 		*exit_id = 126;
 		return (-1);
@@ -70,27 +47,57 @@ int	check_access(char **path, char *cmd, int *exit_id)
 	}
 }
 
-char	*cmnd_path(char **envp, char **cmd, int *exit_id)
+char	*search_paths(char **__paths, char **cmd, int *exit_id)
+{
+	int		i;
+	char	*path;
+	char	*cmd_nm;
+
+	cmd_nm = ft_strjoin("/", cmd[0]);
+	if (!cmd_nm)
+		return (perror("malloc"), set_return(exit_id, 1));
+	i = 0;
+	path = NULL;
+	while (__paths[i])
+	{
+		if (path)
+			free(path);
+		path = ft_strjoin(__paths[i], cmd_nm);
+		if (!path)
+			return (free(cmd_nm), perror("malloc"), set_return(exit_id, 1));
+		if (check_access(path, exit_id) == 0)
+			return (free(cmd_nm), path);
+		i++;
+	}
+	*exit_id = 127;
+	return (free(cmd_nm), free(path), NULL);
+}
+
+char	*cmnd_path(char **envp, char **cmd, int *exit_id, int is_parent)
 {
 	int		i;
 	char	*path;
 	char	**__paths;
 
-	*exit_id = 1;
-	if (!cmd)
-		return (NULL);
+	if (ft_strchr(cmd[0], '/') != NULL && !check_access(cmd[0], exit_id))
+	{
+		path = ft_strdup(cmd[0]);
+		if (!path)
+			return (perror("malloc"), set_return(exit_id, 1));
+		return (path);
+	}
 	i = 0;
 	while (envp[i] && ft_strncmp(envp[i], "PATH=", 5))
 		i++;
 	if (envp[i])
 		__paths = ft_split(envp[i] + 5, ':');
-	if (!__paths)
-		return (NULL);
-	if (ft_strchr(cmd[0], '/') != NULL)
-		check_access(&path, cmd[0], exit_id);
 	else
-		path = search_paths(__paths, cmd, &exit_id);
+		return (set_return(exit_id, 127));
+	if (!__paths)
+		return (perror("malloc"), set_return(exit_id, 1));
+	path = search_paths(__paths, cmd, exit_id);
+	free_list(__paths);
 	if (!path)
-		return (free_list(__paths), NULL);
-	return (free_list(__paths), path);
+		return (set_return(exit_id, 1));
+	return (path);
 }
