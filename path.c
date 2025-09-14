@@ -6,7 +6,7 @@
 /*   By: fares-_-q7h <fares-_-q7h@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/12 18:09:44 by farmoham          #+#    #+#             */
-/*   Updated: 2025/09/13 23:09:27 by fares-_-q7h      ###   ########.fr       */
+/*   Updated: 2025/09/14 03:19:06 by fares-_-q7h      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ char	*search_paths(char **__paths, char **cmd, int *exit_id)
 	return (free(cmd_nm), free(path), NULL);
 }
 
-char	*cmnd_path(char **envp, char **cmd, int *exit_id, int is_parent)
+char	*cmnd_path(char **envp, char **cmd, int *exit_id)
 {
 	int		i;
 	char	*path;
@@ -98,6 +98,6 @@ char	*cmnd_path(char **envp, char **cmd, int *exit_id, int is_parent)
 	path = search_paths(__paths, cmd, exit_id);
 	free_list(__paths);
 	if (!path)
-		return (set_return(exit_id, 1));
+		return (NULL);
 	return (path);
 }
