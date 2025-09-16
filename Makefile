@@ -6,7 +6,7 @@
 #    By: fares-_-q7h <fares-_-q7h@student.42.fr>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/11 21:59:37 by fares-_-q7h       #+#    #+#              #
-#    Updated: 2025/09/15 20:41:38 by fares-_-q7h      ###   ########.fr        #
+#    Updated: 2025/09/16 04:14:44 by fares-_-q7h      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,7 +23,7 @@ LIBFT_EXE = $(LIBFT_DIR)/libftprintf.a
 all: $(NAME)
 
 $(NAME): $(OBJ) $(LIBFT_EXE)
-	cc $(OBJ) $(LIBFT_EXE) -o $(NAME)
+	cc $(CFLAGS) $(OBJ) $(LIBFT_EXE) -o $(NAME)
 
 %.o: %.c
 	$(CC) -c $(CFLAGS) $< -o $@

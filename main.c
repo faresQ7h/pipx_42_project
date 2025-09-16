@@ -6,7 +6,7 @@
 /*   By: fares-_-q7h <fares-_-q7h@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/10 22:04:02 by fares-_-q7h       #+#    #+#             */
-/*   Updated: 2025/09/16 03:09:25 by fares-_-q7h      ###   ########.fr       */
+/*   Updated: 2025/09/16 04:05:21 by fares-_-q7h      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,8 +118,9 @@ int	main(int argc, char **argv, char **envp)
 		return (ft_putstr_fd("Command not found: \n", 2), free_list(cmd), 127);
 	path = cmnd_path(envp, cmd, &exit_id);
 	if (!path)
-		return (print_id(exit_id, cmd[0]), free_list(cmd), exit_id);
+		return (print_id(exit_id, cmd[0], 0), free_list(cmd), exit_id);
 	execve(path, cmd, envp);
 	exit_id = errno;
-	return (perror(cmd[0]), free(path), free_list(cmd), exit_code(exit_id));
+	return (print_id(exit_id, cmd[0], 1), free(path), free_list(cmd),
+		exit_code(exit_id));
 }
