@@ -6,7 +6,7 @@
 /*   By: fares-_-q7h <fares-_-q7h@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/12 18:09:44 by farmoham          #+#    #+#             */
-/*   Updated: 2025/09/14 03:19:06 by fares-_-q7h      ###   ########.fr       */
+/*   Updated: 2025/09/16 01:31:04 by fares-_-q7h      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,19 +16,6 @@ char	*set_return(int *exit_id, int set)
 {
 	*exit_id = set;
 	return (NULL);
-}
-
-void	free_list(char **list)
-{
-	int	i;
-
-	i = 0;
-	while (list[i])
-	{
-		free(list[i]);
-		i++;
-	}
-	free(list);
 }
 
 int	check_access(char *cmd_path, int *exit_id)
@@ -73,19 +60,32 @@ char	*search_paths(char **__paths, char **cmd, int *exit_id)
 	return (free(cmd_nm), free(path), NULL);
 }
 
+char	*path_has_slash(char *cmd, int *exit_id)
+{
+	char	*path;
+
+	if (!check_access(cmd, exit_id))
+	{
+		path = ft_strdup(cmd);
+		if (!path)
+		{
+			perror("malloc");
+			*exit_id = 1;
+			return (NULL);
+		}
+		return (path);
+	}
+	return (NULL);
+}
+
 char	*cmnd_path(char **envp, char **cmd, int *exit_id)
 {
 	int		i;
 	char	*path;
 	char	**__paths;
 
-	if (ft_strchr(cmd[0], '/') != NULL && !check_access(cmd[0], exit_id))
-	{
-		path = ft_strdup(cmd[0]);
-		if (!path)
-			return (perror("malloc"), set_return(exit_id, 1));
-		return (path);
-	}
+	if (ft_strchr(cmd[0], '/') != NULL)
+		return (path_has_slash(cmd[0], exit_id));
 	i = 0;
 	while (envp[i] && ft_strncmp(envp[i], "PATH=", 5))
 		i++;

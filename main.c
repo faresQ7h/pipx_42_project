@@ -6,35 +6,41 @@
 /*   By: fares-_-q7h <fares-_-q7h@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/10 22:04:02 by fares-_-q7h       #+#    #+#             */
-/*   Updated: 2025/09/14 03:24:46 by fares-_-q7h      ###   ########.fr       */
+/*   Updated: 2025/09/16 02:11:16 by fares-_-q7h      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipx.h"
 
-void	print_id(int exit_id, char *cmd_nm)
+void	free_list(char **list)
 {
-	if (exit_id == 126)
-		return (ft_putstr_fd(cmd_nm, 2), ft_putstr_fd(": Permission denied\n",
-				2));
-	else if (exit_id == 127)
-		return (ft_putstr_fd("command not found: ", 2), ft_putstr_fd(cmd_nm, 2),
-			ft_putstr_fd("\n", 2));
-	else
-		return ;
+	int	i;
+
+	i = 0;
+	while (list[i])
+	{
+		free(list[i]);
+		i++;
+	}
+	free(list);
 }
 
-int	exit_code(int e)
+void	wait_all_child(int is_parent, int *exit_id)
 {
-	if (e == ENOENT)
-		return (127);
-	else if (e == EACCES || e == EPERM || e == EISDIR || e == ENOEXEC)
-		return (126);
-	else
-		return (1);
+	int		temp;
+	pid_t	c2;
+
+	while (1)
+	{
+		c2 = wait(&temp);
+		if (c2 == is_parent)
+			*exit_id = temp;
+		else if (c2 < 0)
+			break ;
+	}
 }
 
-int	init_role_and_pipe(int pip[2], int argc)
+int	init_role_and_pipe(int pip[2], int argc, int *exit_id)
 {
 	int	is_parent;
 
@@ -46,7 +52,17 @@ int	init_role_and_pipe(int pip[2], int argc)
 	is_parent = fork();
 	if (is_parent < 0)
 		return (close(pip[0]), close(pip[1]), perror("fork"), -1);
-	return (is_parent != 0);
+	if (is_parent == 0)
+		return (0);
+	is_parent = fork();
+	if (is_parent < 0)
+		return (close(pip[0]), close(pip[1]), perror("fork"), -1);
+	if (is_parent == 0)
+		return (1);
+	close(pip[0]);
+	close(pip[1]);
+	wait_all_child(is_parent, exit_id);
+	return (-2);
 }
 
 int	prepar_fds(int is_parent, int pip[2], char **argv)
@@ -82,7 +98,9 @@ int	main(int argc, char **argv, char **envp)
 	char	*path;
 	char	**cmd;
 
-	is_parent = init_role_and_pipe(pip, argc);
+	is_parent = init_role_and_pipe(pip, argc, &exit_id);
+	if (is_parent == -2)
+		return (parse_exit_id(exit_id));
 	if (is_parent == -1 || prepar_fds(is_parent, pip, argv) == -1)
 		return (1);
 	exit_id = 0;
@@ -90,13 +108,13 @@ int	main(int argc, char **argv, char **envp)
 	if (!cmd)
 		return (perror("malloc"), close(pip[1 - is_parent]), 1);
 	if (!cmd[0] || !*cmd[0])
-		return (ft_putstr_fd("command not found: \n", 2), free_list(cmd), 127);
+		return (ft_putstr_fd("Command not found: \n", 2), free_list(cmd), 127);
 	path = cmnd_path(envp, cmd, &exit_id);
 	if (!path)
 		return (print_id(exit_id, cmd[0]), free_list(cmd), close(pip[1
 					- is_parent]), exit_id);
-	exit_id = errno;
 	execve(path, cmd, envp);
+	exit_id = errno;
 	return (perror(cmd[0]), free(path), free_list(cmd), close(pip[1
 				- is_parent]), exit_code(exit_id));
 }

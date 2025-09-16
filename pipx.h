@@ -6,7 +6,7 @@
 /*   By: fares-_-q7h <fares-_-q7h@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/10 22:37:20 by fares-_-q7h       #+#    #+#             */
-/*   Updated: 2025/09/14 02:45:12 by fares-_-q7h      ###   ########.fr       */
+/*   Updated: 2025/09/15 23:03:24 by fares-_-q7h      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,5 +25,8 @@
 
 char	*cmnd_path(char **envp, char **cmd, int *exit_id);
 void	free_list(char **list);
+int		exit_code(int e);
+void	print_id(int exit_id, char *cmd_nm);
+int		parse_exit_id(int exit_id);
 
 #endif
