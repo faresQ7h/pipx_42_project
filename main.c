@@ -6,7 +6,7 @@
 /*   By: fares-_-q7h <fares-_-q7h@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/10 22:04:02 by fares-_-q7h       #+#    #+#             */
-/*   Updated: 2025/09/16 04:05:21 by fares-_-q7h      ###   ########.fr       */
+/*   Updated: 2025/09/16 04:19:08 by fares-_-q7h      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,20 +78,20 @@ int	prepar_fds(int is_parent, int pip[2], char **argv)
 	{
 		fd = open(argv[4], O_CREAT | O_WRONLY | O_TRUNC, 0644);
 		if (fd < 0)
-			return (close(pip[0]), close(pip[1]), perror("Error cmd2"), -1);
+			return (close(pip[0]), close(pip[1]), perror(argv[4]), -1);
 		close(pip[1]);
 		if (dup2(pip[0], STDIN_FILENO) == -1 || dup2(fd, STDOUT_FILENO) == -1)
-			return (close(fd), close(pip[0]), perror("Error cmd2"), -1);
+			return (close(fd), close(pip[0]), perror(argv[4]), -1);
 		close(pip[0]);
 	}
 	else
 	{
 		fd = open(argv[1], O_RDONLY);
 		if (fd < 0)
-			return (close(pip[0]), close(pip[1]), perror("Error cmd1"), -1);
+			return (close(pip[0]), close(pip[1]), perror(argv[1]), -1);
 		close(pip[0]);
 		if (dup2(fd, STDIN_FILENO) == -1 || dup2(pip[1], STDOUT_FILENO) == -1)
-			return (close(fd), close(pip[1]), perror("Error cmd1"), -1);
+			return (close(fd), close(pip[1]), perror(argv[1]), -1);
 		close(pip[1]);
 	}
 	return (close(fd), 0);
