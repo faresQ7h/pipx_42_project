@@ -6,7 +6,7 @@
 /*   By: fares-_-q7h <fares-_-q7h@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/10 22:04:02 by fares-_-q7h       #+#    #+#             */
-/*   Updated: 2025/09/16 02:11:16 by fares-_-q7h      ###   ########.fr       */
+/*   Updated: 2025/09/16 03:09:25 by fares-_-q7h      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,18 +25,23 @@ void	free_list(char **list)
 	free(list);
 }
 
-void	wait_all_child(int is_parent, int *exit_id)
+void	wait_all_child(pid_t pid_cmd2, int *exit_id)
 {
 	int		temp;
-	pid_t	c2;
+	pid_t	p;
 
 	while (1)
 	{
-		c2 = wait(&temp);
-		if (c2 == is_parent)
-			*exit_id = temp;
-		else if (c2 < 0)
-			break ;
+		p = wait(&temp);
+		if (p > 0)
+		{
+			if (p == pid_cmd2)
+				*exit_id = temp;
+			continue ;
+		}
+		if (errno == EINTR)
+			continue ;
+		break ;
 	}
 }
 
@@ -77,6 +82,7 @@ int	prepar_fds(int is_parent, int pip[2], char **argv)
 		close(pip[1]);
 		if (dup2(pip[0], STDIN_FILENO) == -1 || dup2(fd, STDOUT_FILENO) == -1)
 			return (close(fd), close(pip[0]), perror("Error cmd2"), -1);
+		close(pip[0]);
 	}
 	else
 	{
@@ -86,6 +92,7 @@ int	prepar_fds(int is_parent, int pip[2], char **argv)
 		close(pip[0]);
 		if (dup2(fd, STDIN_FILENO) == -1 || dup2(pip[1], STDOUT_FILENO) == -1)
 			return (close(fd), close(pip[1]), perror("Error cmd1"), -1);
+		close(pip[1]);
 	}
 	return (close(fd), 0);
 }
@@ -106,15 +113,13 @@ int	main(int argc, char **argv, char **envp)
 	exit_id = 0;
 	cmd = ft_split(argv[2 + is_parent], ' ');
 	if (!cmd)
-		return (perror("malloc"), close(pip[1 - is_parent]), 1);
+		return (perror("malloc"), 1);
 	if (!cmd[0] || !*cmd[0])
 		return (ft_putstr_fd("Command not found: \n", 2), free_list(cmd), 127);
 	path = cmnd_path(envp, cmd, &exit_id);
 	if (!path)
-		return (print_id(exit_id, cmd[0]), free_list(cmd), close(pip[1
-					- is_parent]), exit_id);
+		return (print_id(exit_id, cmd[0]), free_list(cmd), exit_id);
 	execve(path, cmd, envp);
 	exit_id = errno;
-	return (perror(cmd[0]), free(path), free_list(cmd), close(pip[1
-				- is_parent]), exit_code(exit_id));
+	return (perror(cmd[0]), free(path), free_list(cmd), exit_code(exit_id));
 }
