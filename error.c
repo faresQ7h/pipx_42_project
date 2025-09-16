@@ -6,27 +6,21 @@
 /*   By: fares-_-q7h <fares-_-q7h@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 20:29:16 by fares-_-q7h       #+#    #+#             */
-/*   Updated: 2025/09/16 03:06:07 by fares-_-q7h      ###   ########.fr       */
+/*   Updated: 2025/09/16 03:24:22 by fares-_-q7h      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipx.h"
 
-int	parse_exit_id(int exit_id)
+int parse_exit_id(int st)
 {
-	if (WIFEXITED(exit_id))
-	{
-		if (WEXITSTATUS(exit_id) == 127)
-			return (127);
-		else if (WEXITSTATUS(exit_id) == 126)
-			return (126);
-		else if (WEXITSTATUS(exit_id) != 0)
-			return (1);
-	}
-	else if (WIFSIGNALED(exit_id))
-		return (128 + WTERMSIG(exit_id));
-	return (0);
+    if (WIFEXITED(st))
+        return WEXITSTATUS(st);
+    if (WIFSIGNALED(st))
+        return 128 + WTERMSIG(st);
+    return 1;
 }
+
 
 void	print_id(int exit_id, char *cmd_nm)
 {
