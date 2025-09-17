@@ -6,7 +6,7 @@
 /*   By: farmoham <farmoham@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/10 22:04:02 by fares-_-q7h       #+#    #+#             */
-/*   Updated: 2025/09/17 01:57:45 by farmoham         ###   ########.fr       */
+/*   Updated: 2025/09/18 01:42:48 by farmoham         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ void	free_list(char **list)
 	int	i;
 
 	i = 0;
+	if (!list)
+		return ;
 	while (list[i])
 	{
 		free(list[i]);
@@ -119,7 +121,8 @@ int	main(int argc, char **argv, char **envp)
 	path = cmnd_path(envp, cmd, &exit_id);
 	if (!path)
 		return (print_id(exit_id, cmd[0], 0), free_list(cmd), exit_id);
-	execve(path, cmd, envp);
+	while (cmd && execve(path, cmd, envp) && errno == ENOEXEC)
+		cmd = fall_back(&path, cmd);
 	exit_id = errno;
 	return (print_id(exit_id, cmd[0], 1), free(path), free_list(cmd),
 		exit_code(exit_id));
