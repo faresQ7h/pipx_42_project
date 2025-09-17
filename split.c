@@ -6,7 +6,7 @@
 /*   By: farmoham <farmoham@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/16 19:06:45 by farmoham          #+#    #+#             */
-/*   Updated: 2025/09/17 01:59:00 by farmoham         ###   ########.fr       */
+/*   Updated: 2025/09/17 02:23:03 by farmoham         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ void	*free_return(char **list, int len)
 	int	i;
 
 	i = 0;
-	while (i <= len)
+	while (i < len)
 	{
 		free(list[i]);
 		i++;

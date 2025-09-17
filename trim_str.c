@@ -6,7 +6,7 @@
 /*   By: farmoham <farmoham@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 01:10:25 by farmoham          #+#    #+#             */
-/*   Updated: 2025/09/17 01:54:47 by farmoham         ###   ########.fr       */
+/*   Updated: 2025/09/17 02:28:02 by farmoham         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,15 +24,9 @@ int	trimmed_len(char *str, int i, int count)
 		{
 			open_q = i;
 			in_q = 1;
-			i++;
-			continue ;
 		}
-		if (in_q && (str[i] == str[open_q]))
-		{
+		else if (in_q && (str[i] == str[open_q]))
 			in_q = 0;
-			i++;
-			continue ;
-		}
 		i++;
 		count++;
 	}
