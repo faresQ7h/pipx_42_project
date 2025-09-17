@@ -3,15 +3,15 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: fares-_-q7h <fares-_-q7h@student.42.fr>    +#+  +:+       +#+         #
+#    By: farmoham <farmoham@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/11 21:59:37 by fares-_-q7h       #+#    #+#              #
-#    Updated: 2025/09/16 04:14:44 by fares-_-q7h      ###   ########.fr        #
+#    Updated: 2025/09/17 01:57:36 by farmoham         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = 	pipex
-SRC = main.c path.c error.c
+SRC = main.c path.c error.c split.c trim_str.c
 OBJ = $(SRC:.c=.o)
 CFLAGS = -Wall -Wextra -Werror
 CC = cc
